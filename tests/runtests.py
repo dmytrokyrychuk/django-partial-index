@@ -23,6 +23,11 @@ def main(args):
         print('Testing with SQLite...', file=sys.stderr)
         exitcodes.append(subprocess.call([RUNNER_PY, '--db', 'sqlite'] + args.testpaths))
         print('Done testing with SQLite.', file=sys.stderr)
+    print('', file=sys.stderr)
+    if not args.skip_microsoft:
+        print('Testing with Microsoft SQL Server...', file=sys.stderr)
+        exitcodes.append(subprocess.call([RUNNER_PY, '--db', 'microsoft'] + args.testpaths))
+        print('Done testing with Microsoft SQL Server.', file=sys.stderr)
     # Exit with 0 if all non-skipped tests did the same.
     sys.exit(max(exitcodes) or 0)
 
@@ -31,6 +36,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Runs tests.')
     parser.add_argument('--skip-postgresql', default=False, action='store_true')
     parser.add_argument('--skip-sqlite', default=False, action='store_true')
+    parser.add_argument('--skip-microsoft', default=False, action='store_true')
     parser.add_argument('testpaths', nargs='*')
     args = parser.parse_args()
     main(args)

@@ -5,11 +5,28 @@ python:
   - 3.5
   - 3.6
 env:
-  - DJANGO_VERSION=1.11.14
-  - DJANGO_VERSION=2.0.7
+  # django-pyodbc-azure==2.1.0.0 supports only Django 2.1 so we skip running
+  # tests against Microsoft SQL Server on all other Django versions.
+  - DJANGO_VERSION=1.11.14 SKIP_MICROSOFT="--skip-microsoft"
+  - DJANGO_VERSION=2.0.7 SKIP_MICROSOFT="--skip-microsoft"
+  - DJANGO_VERSION=2.1.3 SKIP_MICROSOFT=""
 matrix:
   exclude:
-  - python: 2.7
-    env: DJANGO_VERSION=2.0.7
-install: "pip install -q psycopg2 django==$DJANGO_VERSION djangorestframework==3.8.2"
-script: ./tests/runtests.py
+  - python: 2.7  # Django 2.0 requires Python 3.4+
+    env: DJANGO_VERSION=2.0.7 SKIP_MICROSOFT="--skip-microsoft"
+  - python: 2.7  # Django 2.1 requires Python 3.5+
+    env: DJANGO_VERSION=2.1.3 SKIP_MICROSOFT=""
+  - python: 3.4  # Django 2.1 requires Python 3.5+
+    env: DJANGO_VERSION=2.1.3 SKIP_MICROSOFT=""
+before_install:
+  - curl https://packages.microsoft.com/keys/microsoft.asc | sudo apt-key add -
+  - sudo add-apt-repository https://packages.microsoft.com/ubuntu/14.04/prod
+  - sudo apt-get update
+  - sudo ACCEPT_EULA=Y apt-get install msodbcsql
+  - apt-cache madison unixodbc-dev
+  - sudo apt-get install unixodbc-dev
+install:
+  # Install django-pyodbc-azure only when $SKIP_MICROSOFT is not empty.
+  - if [ -z "$SKIP_MICROSOFT" ]; then DJANGO_PYODBC_AZURE="django-pyodbc-azure==2.1.0.0"; fi
+  - pip install -q psycopg2 django==$DJANGO_VERSION djangorestframework==3.8.2 $DJANGO_PYODBC_AZURE
+script: ./tests/runtests.py $SKIP_MICROSOFT

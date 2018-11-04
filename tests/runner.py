@@ -23,6 +23,15 @@ DATABASES_FOR_DB = {
             'NAME': join(REPO_DIR, 'partial_index.sqlite3'),
         }
     },
+    'microsoft': {
+        'default': {
+            'ENGINE': 'sql_server.pyodbc',
+            'NAME': 'partial_index',
+            'OPTIONS': {
+                'driver': 'ODBC Driver 17 for SQL Server',
+            }
+        }
+    },
 }
 
 

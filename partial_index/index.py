@@ -42,6 +42,7 @@ class PartialIndex(Index):
     sql_create_index = {
         'postgresql': 'CREATE%(unique)s INDEX %(name)s ON %(table)s%(using)s (%(columns)s)%(extra)s WHERE %(where)s',
         'sqlite': 'CREATE%(unique)s INDEX %(name)s ON %(table)s%(using)s (%(columns)s) WHERE %(where)s',
+        'microsoft': 'CREATE%(unique)s INDEX %(name)s ON %(table)s%(using)s (%(columns)s) WHERE %(where)s',
     }
 
     # Mutable default fields=[] looks wrong, but it's copied from super class.

@@ -6,6 +6,7 @@ from django.db.models.sql import Query
 class Vendor(object):
     POSTGRESQL = 'postgresql'
     SQLITE = 'sqlite'
+    MICROSOFT = 'microsoft'
 
 
 class PQ(Q):
@@ -71,7 +72,7 @@ class PF(F):
 
 def get_valid_vendor(schema_editor):
     vendor = schema_editor.connection.vendor
-    if vendor not in [Vendor.POSTGRESQL, Vendor.SQLITE]:
+    if vendor not in [Vendor.POSTGRESQL, Vendor.SQLITE, Vendor.MICROSOFT]:
         raise ValueError('Database vendor %s is not supported by django-partial-index.' % vendor)
     return vendor
 
